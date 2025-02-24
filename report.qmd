@@ -1,0 +1,209 @@
+---
+title: "Customer Shopping Trends ER Model"
+author: "Jannat"
+date: "02-23-2025"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+---
+
+# Introduction
+This report presents an **Entity-Relationship (ER) Model** for customer shopping trends. The goal is to structure the dataset for efficient database design, identifying **entities, attributes, relationships, and cardinalities**. 
+
+# Entities and Attributes
+
+## Customer Entity  
+**Primary Key**: Customer ID  
+**Attributes**:
+- Age  
+- Gender  
+- Location  
+- Subscription Status  
+- Previous Purchases  
+- Preferred Payment Method  
+- Frequency of Purchases  
+
+## Product Entity  
+**Primary Key**: Item Purchased  
+**Attributes**:
+- Category  
+- Size  
+- Color  
+- Season  
+
+## Purchase Entity (Transaction Table)  
+**Primary Key**: (Customer ID, Item Purchased) *(Composite Key)*  
+**Foreign Keys**:
+- Customer ID (References Customer)  
+- Item Purchased (References Product)  
+**Attributes**:
+- Purchase Amount (USD)  
+- Review Rating  
+- Payment Method  
+- Shipping Type  
+- Discount Applied  
+- Promo Code Used  
+
+# Relationships and Cardinalities
+
+1. **Customer purchases Products** *(One-to-Many)*  
+   - One customer can make multiple purchases, but each purchase belongs to only one customer.  
+2. **Product belongs to a Category** *(One-to-Many)*  
+   - A product belongs to a single category, but a category can have multiple products.  
+3. **Customer prefers a Payment Method** *(One-to-One)*  
+   - A customer has a preferred payment method.  
+4. **Purchase is made using a Payment Method** *(Many-to-One)*  
+   - Each purchase is associated with a specific payment method.  
+
+# ER Diagram
+
+
+## Entity-Relationship Diagrams (ER Diagrams)
+
+
+## Entities and Attributes Identified
+
+### **Customer Entity**
+- **Primary Key:** Customer ID  
+- **Attributes:**
+  - Age
+  - Gender
+  - Location
+  - Subscription Status
+  - Previous Purchases
+  - Preferred Payment Method
+  - Frequency of Purchases
+
+### **Product Entity**
+- **Primary Key:** Item Purchased  
+- **Attributes:**
+  - Category
+  - Size
+  - Color
+  - Season
+
+### **Purchase Entity (Transaction Table)**
+- **Primary Key:** (Customer ID, Item Purchased) (Composite Key)  
+- **Foreign Keys:**
+  - Customer ID (References Customer)
+  - Item Purchased (References Product)
+
+- **Attributes:**
+  - Purchase Amount (USD)
+  - Review Rating
+  - Payment Method
+  - Shipping Type
+  - Discount Applied
+  - Promo Code Used
+
+---
+
+## Relationships
+- **Customer purchases Products** (One-to-Many)  
+  - One customer can make multiple purchases, but each purchase belongs to only one customer.
+- **Product belongs to a Category** (One-to-Many)  
+  - A product belongs to a single category, but a category can have multiple products.
+- **Customer prefers a Payment Method** (One-to-One)  
+  - A customer has a preferred payment method.
+- **Purchase is made using a Payment Method** (Many-to-One)  
+  - Each purchase is associated with a specific payment method.
+
+---
+
+## **Chen Notation (Graphviz)**
+```{dot}
+graph ER {
+    Customer [shape=box];
+    Product [shape=box];
+    Purchase [shape=diamond];
+    Category [shape=box];
+    PaymentMethod [shape=box];
+    
+    Customer -- Purchase [label="purchases"];
+    Purchase -- Product [label="includes"];
+    Product -- Category [label="belongs_to"];
+    Customer -- PaymentMethod [label="prefers"];
+    Purchase -- PaymentMethod [label="made_using"];
+}
+```
+
+---
+
+## **Crow’s Foot Notation (Mermaid)**
+```{mermaid}
+erDiagram
+    CUSTOMER {
+        int customer_id
+        int age
+        string gender
+        string location
+        string subscription_status
+        int previous_purchases
+        string preferred_payment_method
+        int frequency_of_purchases
+    }
+    
+    PRODUCT {
+        string item_purchased
+        string category
+        string size
+        string color
+        string season
+    }
+    
+    PURCHASE {
+        int customer_id
+        string item_purchased
+        float purchase_amount_usd
+        int review_rating
+        string payment_method
+        string shipping_type
+        float discount_applied
+        string promo_code_used
+    }
+    
+    CATEGORY {
+        string category_name
+    }
+    
+    PAYMENTMETHOD {
+        string payment_method
+    }
+    
+    CUSTOMER ||--o{ PURCHASE : purchases
+    PURCHASE ||--o{ PRODUCT : includes
+    PRODUCT ||--o{ CATEGORY : belongs_to
+    CUSTOMER ||--|| PAYMENTMETHOD : prefers
+    PURCHASE ||--o{ PAYMENTMETHOD : made_using
+```
+
+---
+
+## **Design Choices**
+- **Weak Entities:** None identified in these models.
+- **Composite Attributes:** Not used to keep a normalized structure.
+- **Multivalued Attributes:** Not used; relationships capture multiple associations.
+- **Normalization:** All models are in **3rd Normal Form (3NF)**.
+
+---
+The diagram follows **Crow’s Foot Notation**, representing entities, relationships, and their cardinalities.
+
+# Relational Model
+This section maps the ER model into a relational schema, defining **primary keys, foreign keys, and table structures**. 
+
+## Tables
+
+### Customer Table
+```{sql}
+CREATE TABLE Customer (
+    CustomerID INT PRIMARY KEY,
+    Age INT,
+    Gender VARCHAR(10),
+    Location VARCHAR(100),
+    SubscriptionStatus BOOLEAN,
+    PreviousPurchases INT,
+    PreferredPaymentMethod VARCHAR(50),
+    FrequencyOfPurchases INT
+);
